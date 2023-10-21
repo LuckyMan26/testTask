@@ -5,9 +5,12 @@
 #include <QDateTime>
 #include <QTimer>
 #include "image.h"
+#include <QLabel>
+#include "t.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+
 {
     ui->setupUi(this);
     screen =  QGuiApplication::primaryScreen();
@@ -20,10 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
     timer->start(60000);
+    cur_row = 0;
+    cur_col = 0;
 
 
 }
 void MainWindow::takeScreenShot(){
+
     QDateTime currentDateTime = QDateTime::currentDateTime();
 
 
@@ -33,9 +39,35 @@ void MainWindow::takeScreenShot(){
     QPixmap pixmap = screen->grabWindow(0);
     QImage image = pixmap.toImage();
     qDebug()<<image.save(fileFullPath)<<"\n";
-    Image* img = new Image(image);
-    img->d.readFromDB(1);
+    Image* img = new Image(image, this);
+
+    connect(img, &Image::finishedSavingToDB, this, [img,this]{addImgToLayout(*img); });
+    img->saveToDB();
+    connect(img, &QObject::destroyed,
+            [] { qDebug() << "Sender got deleted!"; });
+    connect(this, &QObject::destroyed,
+            [] { qDebug() << "Receiver got deleted!"; });
+
     qDebug() << "Saved\n";
+}
+void MainWindow::addImgToLayout(Image& i){
+    qDebug() << "adding to layout\n";
+    QImage imgTemp = i.resize(500,500);
+    Image* resizedImage = new Image(imgTemp);
+    QLabel *imageLabel = new QLabel(this);
+
+    QPixmap imagePixmap = resizedImage->getPixmap();
+
+    imageLabel->setPixmap(imagePixmap);
+
+    layout->addWidget(imageLabel, cur_row, cur_col);
+
+    cur_col++;
+    if(cur_col > 5){
+        cur_col = 0;
+        cur_row++;
+    }
+
 }
 MainWindow::~MainWindow()
 {

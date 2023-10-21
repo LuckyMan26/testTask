@@ -6,13 +6,14 @@
 #include <QSql>
 #include <QBuffer>
 #include <QCryptographicHash>
+#include <QPainter>
+
 db Image::d = db();
-Image::Image(QImage& i)
+Image::Image(QImage& i,QObject* p) : QObject{p}
 {
     img = new QImage(i);
-
     hashsum = calculateImageHash();
-    saveToDB();
+
 }
 QByteArray Image::calculateImageHash(){
     QByteArray imageData;
@@ -26,8 +27,26 @@ QByteArray Image::calculateImageHash(){
 
     return hash.toHex();
 }
+
 void Image::saveToDB() {
     d.saveToDB(*img,hashsum);
+    emit finishedSavingToDB();
+}
+
+QPixmap Image::getPixmap(){
+    QPixmap m = QPixmap::fromImage(*img);
+    return m;
+}
+QImage Image::resize(int w,int h){
+
+    QImage resizedImage(w, h, QImage::Format_ARGB32);
+
+    QPainter painter(&resizedImage);
+
+    painter.drawImage(0, 0, img->scaled(w, h));
+
+    painter.end();
+    return resizedImage;
 }
 double Image::compareToPreviousImage(){
     QString url = "E:/images/image_13_21_36.png";

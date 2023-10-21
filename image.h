@@ -4,11 +4,12 @@
 
 #include <QImage>
 #include "db.h"
+#include <QObject>
 
 
-
-class Image
+class Image :  public QObject
 {
+    Q_OBJECT
     QByteArray hashsum;
     double similarity;
 
@@ -17,10 +18,15 @@ class Image
     QByteArray calculateImageHash();
 public:
     static db d;
-    Image(QImage& i);
+    Image(QImage& i,QObject* p=nullptr);
     void saveToDB();
     double compareToPreviousImage();
     void saveToDB() const;
+    QPixmap getPixmap();
+
+    QImage resize(int w, int h);
+signals:
+    void finishedSavingToDB(void);
 
 };
 
