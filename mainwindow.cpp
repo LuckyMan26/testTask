@@ -34,7 +34,7 @@ void MainWindow::takeScreenShot(){
     QImage image = pixmap.toImage();
     qDebug()<<image.save(fileFullPath)<<"\n";
     Image* img = new Image(image);
-
+    img->d.readFromDB(1);
     qDebug() << "Saved\n";
 }
 MainWindow::~MainWindow()

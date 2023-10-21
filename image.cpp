@@ -18,7 +18,7 @@ QByteArray Image::calculateImageHash(){
     QByteArray imageData;
     QBuffer buffer(&imageData);
     buffer.open(QIODevice::WriteOnly);
-    img->save(&buffer, "JPG");
+    img->save(&buffer, "PNG");
     buffer.close();
 
 

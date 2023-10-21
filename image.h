@@ -13,9 +13,10 @@ class Image
     double similarity;
 
     QImage* img;
-    static db d;
+
     QByteArray calculateImageHash();
 public:
+    static db d;
     Image(QImage& i);
     void saveToDB();
     double compareToPreviousImage();
