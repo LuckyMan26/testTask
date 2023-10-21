@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
     timer->start(60000);
     Image img;
-    img.compareToPreviousImage();
+    double res = img.compareToPreviousImage();
+    qDebug() << "Result: " << res << "\n";
 
 }
 void MainWindow::takeScreenShot(){
