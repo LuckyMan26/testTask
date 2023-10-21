@@ -3,20 +3,23 @@
 #define IMAGE_H
 
 #include <QImage>
-
+#include "db.h"
 
 
 
 class Image
 {
-    int hashsum;
+    QByteArray hashsum;
     double similarity;
 
     QImage* img;
+    static db d;
+    QByteArray calculateImageHash();
 public:
-    Image();
+    Image(QImage& i);
     void saveToDB();
     double compareToPreviousImage();
+    void saveToDB() const;
 
 };
 

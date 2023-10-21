@@ -20,9 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
     timer->start(60000);
-    Image img;
-    double res = img.compareToPreviousImage();
-    qDebug() << "Result: " << res << "\n";
+
 
 }
 void MainWindow::takeScreenShot(){
@@ -35,6 +33,8 @@ void MainWindow::takeScreenShot(){
     QPixmap pixmap = screen->grabWindow(0);
     QImage image = pixmap.toImage();
     qDebug()<<image.save(fileFullPath)<<"\n";
+    Image* img = new Image(image);
+
     qDebug() << "Saved\n";
 }
 MainWindow::~MainWindow()

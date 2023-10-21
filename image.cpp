@@ -3,16 +3,32 @@
 #include "qpixmap.h"
 #include "QDebug"
 #include <QRgb>
-Image::Image()
+#include <QSql>
+#include <QBuffer>
+#include <QCryptographicHash>
+db Image::d = db();
+Image::Image(QImage& i)
 {
-    //img = new QImage(image);
-    QString url = "E:/images/image_12_38_01.png";
+    img = new QImage(i);
 
-    QPixmap im(url);
-    img = new QImage(im.toImage());
-    hashsum = 1;
+    hashsum = calculateImageHash();
+    saveToDB();
 }
+QByteArray Image::calculateImageHash(){
+    QByteArray imageData;
+    QBuffer buffer(&imageData);
+    buffer.open(QIODevice::WriteOnly);
+    img->save(&buffer, "JPG");
+    buffer.close();
 
+
+    QByteArray hash = QCryptographicHash::hash(imageData, QCryptographicHash::Md5);
+
+    return hash.toHex();
+}
+void Image::saveToDB() {
+    d.saveToDB(*img,hashsum);
+}
 double Image::compareToPreviousImage(){
     QString url = "E:/images/image_13_21_36.png";
 
@@ -28,12 +44,12 @@ double Image::compareToPreviousImage(){
         QRgb *rgbLeft=(QRgb*)left->constScanLine(i);
         QRgb *rgbRigth=(QRgb*)img->constScanLine(i);
         QRgb *rgbResult=(QRgb*)result->constScanLine(i);
+
     for(int j=0;j<w;j++){
-            rgbLeft[j]->
-            rgbResult[j] = rgbLeft[j]-rgbRigth[j];
+
+        rgbResult[j] = rgbLeft[j]-rgbRigth[j];
 
         double res = rgbResult[j]*rgbResult[j];
-
 
         mse+=(res);
     }
