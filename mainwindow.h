@@ -25,7 +25,8 @@ private:
     QGridLayout* layout;
     QPushButton *button;
     QScreen* screen;
-
+    QString filePath;
+    QTimer* timer;
     Ui::MainWindow *ui;
 };
 
