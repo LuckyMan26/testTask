@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QTimer>
-
+#include "image.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
     timer->start(60000);
+    Image img;
+    img.compareToPreviousImage();
 
 }
 void MainWindow::takeScreenShot(){
