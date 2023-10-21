@@ -18,12 +18,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+private slots:
+    void takeScreenShot();
 private:
     QGridLayout* layout;
-    QPushButton *button1;
-    QPushButton *button2;
-    QPushButton *button3;
+    QPushButton *button;
+
     Ui::MainWindow *ui;
 };
 
