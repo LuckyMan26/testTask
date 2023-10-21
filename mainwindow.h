@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QScreen>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,6 +24,7 @@ private slots:
 private:
     QGridLayout* layout;
     QPushButton *button;
+    QScreen* screen;
 
     Ui::MainWindow *ui;
 };
