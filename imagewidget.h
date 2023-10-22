@@ -5,16 +5,17 @@
 
 #include <QWidget>
 #include <QLabel>
+#include "image.h"
 
 class ImageWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ImageWidget(QWidget *parent = nullptr);
+    explicit ImageWidget(Image& i, QWidget *parent = nullptr);
      void setImage(const QImage& image);
 private:
     QLabel* label;
-    QImage image;
+    Image* image;
     QLabel *imageLabel;
 protected:
     void mousePressEvent (QMouseEvent * event ) override;

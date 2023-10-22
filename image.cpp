@@ -27,7 +27,9 @@ QByteArray Image::calculateImageHash(){
 
     return hash.toHex();
 }
-
+QImage Image::getImg(){
+    return (*img);
+}
 void Image::saveToDB() {
     d.saveToDB(*img,hashsum);
     emit finishedSavingToDB();

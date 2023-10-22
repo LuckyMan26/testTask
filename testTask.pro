@@ -12,6 +12,7 @@ SOURCES += \
     db.cpp \
     image.cpp \
     imagewidget.cpp \
+    imagewindow.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -19,6 +20,7 @@ HEADERS += \
     db.h \
     image.h \
     imagewidget.h \
+    imagewindow.h \
     mainwindow.h
 
 FORMS += \

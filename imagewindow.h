@@ -3,14 +3,16 @@
 #define IMAGEWINDOW_H
 
 
+#include <QMainWindow>
+#include <QLabel>
 
-
-class ImageWindow : public QMainWindow
+class imageWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit ImageWindow(QWidget *parent = nullptr);
-
+    explicit imageWindow(const QImage& image,QWidget *parent = nullptr);
+private:
+      QLabel* imageLabel;
 signals:
 
 };

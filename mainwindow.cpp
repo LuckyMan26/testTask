@@ -52,10 +52,9 @@ void MainWindow::takeScreenShot(){
 }
 void MainWindow::addImgToLayout(Image& i){
     qDebug() << "adding to layout\n";
-    ImageWidget* w = new ImageWidget();
+    ImageWidget* w = new ImageWidget(i);
 
-    QImage imgTemp = i.resize(250,250);
-    w->setImage(imgTemp);
+
 
     layout->addWidget(w, cur_row, cur_col);
 

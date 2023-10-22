@@ -25,6 +25,7 @@ public:
     QPixmap getPixmap();
 
     QImage resize(int w, int h);
+    QImage getImg();
 signals:
     void finishedSavingToDB(void);
 
