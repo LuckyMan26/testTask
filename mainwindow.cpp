@@ -6,7 +6,7 @@
 #include <QTimer>
 #include "image.h"
 #include <QLabel>
-#include "t.h"
+#include "imagewidget.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -52,15 +52,12 @@ void MainWindow::takeScreenShot(){
 }
 void MainWindow::addImgToLayout(Image& i){
     qDebug() << "adding to layout\n";
-    QImage imgTemp = i.resize(500,500);
-    Image* resizedImage = new Image(imgTemp);
-    QLabel *imageLabel = new QLabel(this);
+    ImageWidget* w = new ImageWidget();
 
-    QPixmap imagePixmap = resizedImage->getPixmap();
+    QImage imgTemp = i.resize(250,250);
+    w->setImage(imgTemp);
 
-    imageLabel->setPixmap(imagePixmap);
-
-    layout->addWidget(imageLabel, cur_row, cur_col);
+    layout->addWidget(w, cur_row, cur_col);
 
     cur_col++;
     if(cur_col > 5){

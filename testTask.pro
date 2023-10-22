@@ -11,12 +11,14 @@ CONFIG += c++11
 SOURCES += \
     db.cpp \
     image.cpp \
+    imagewidget.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     db.h \
     image.h \
+    imagewidget.h \
     mainwindow.h
 
 FORMS += \
