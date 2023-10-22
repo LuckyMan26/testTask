@@ -7,6 +7,9 @@
 #include "image.h"
 #include <QLabel>
 #include "imagewidget.h"
+#include "handleimagetask.h"
+#include <QThreadPool>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -31,6 +34,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 }
+void MainWindow::readImagesFromDB(){
+    db d;
+    int num = d.getMaxId();
+
+    for(int i=0;i < num;i++){
+        Image img = d.readFromDB(i+1);
+        addImgToLayout(img);
+    }
+
+}
 void MainWindow::takeScreenShot(){
 
     QDateTime currentDateTime = QDateTime::currentDateTime();
@@ -44,10 +57,13 @@ void MainWindow::takeScreenShot(){
     qDebug()<<image.save(fileFullPath)<<"\n";
     Image* img = new Image(image, this);
 
-    connect(img, &Image::finishedSavingToDB, this, [img,this]{addImgToLayout(*img); });
-    img->handleImage(prevImage);
+
+    HandleImageTask* task = new HandleImageTask(img,prevImage);
+    connect(task, &HandleImageTask::finishedHandling, this, [img,this]{addImgToLayout(*img); },Qt::ConnectionType::QueuedConnection);
+
+    QThreadPool::globalInstance()->start(task);
     prevImage = new QImage(image);
-    qDebug() << "Here\n";
+
     connect(img, &QObject::destroyed,
             [] { qDebug() << "Sender got deleted!"; });
     connect(this, &QObject::destroyed,
@@ -56,11 +72,9 @@ void MainWindow::takeScreenShot(){
     qDebug() << "Saved\n";
 }
 void MainWindow::addImgToLayout(Image& i){
+    i.saveToDB();
     qDebug() << "adding to layout\n";
     ImageWidget* w = new ImageWidget(i);
-
-
-
     layout->addWidget(w, cur_row, cur_col);
 
     cur_col++;

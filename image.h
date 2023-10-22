@@ -2,8 +2,9 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <QImage>
 #include "db.h"
+#include <QImage>
+
 #include <QObject>
 
 
@@ -18,7 +19,8 @@ class Image :  public QObject
     QByteArray calculateImageHash();
 public:
     static db d;
-    Image(QImage& i,QObject* p=nullptr);
+    Image(QImage& i, QObject* p=nullptr);
+    Image(Image& i);
     void saveToDB();
     double compareToPreviousImage(QImage* img);
     void saveToDB() const;
@@ -28,6 +30,7 @@ public:
     QImage getImg();
     double getSimilarity();
     void handleImage(QImage* prevImg);
+    void setSimilarty(double);
 signals:
     void finishedSavingToDB(void);
 

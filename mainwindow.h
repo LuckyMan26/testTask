@@ -25,6 +25,7 @@ public slots:
     void addImgToLayout(Image&);
 
 private:
+    void readImagesFromDB();
     QGridLayout* layout;
     QPushButton *button;
     QScreen* screen;

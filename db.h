@@ -6,13 +6,15 @@
 #include <QSql>
 #include <QSqlDatabase>
 #include <QImage>
+class Image;
 class db
 {
     QSqlDatabase database;
 public:
     db();
     static void saveToDB(QImage&,QByteArray&,double );
-    void readFromDB(long long int);
+    Image readFromDB(long long int);
+    long long int getMaxId();
     ~db();
 };
 

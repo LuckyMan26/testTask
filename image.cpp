@@ -9,11 +9,19 @@
 #include <QPainter>
 
 db Image::d = db();
-Image::Image(QImage& i,QObject* p) : QObject{p}
+Image::Image(QImage& i, QObject* p) : QObject{p}
 {
     img = new QImage(i);
     hashsum = calculateImageHash();
-
+    similarity = 0;
+}
+Image::Image(Image& i){
+    img = i.img;
+    hashsum = i.hashsum;
+    similarity = i.similarity;
+}
+void Image::setSimilarty(double s){
+    similarity = s;
 }
 QByteArray Image::calculateImageHash(){
     QByteArray imageData;

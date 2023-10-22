@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <string>
+#include "image.h"
 
 db::db()
 {
@@ -21,7 +22,18 @@ db::db()
     }
 
 }
+long long int db::getMaxId(){
+    QSqlQuery query;
+    query.exec("SELECT MAX(id) FROM images");
+    if (query.next()) {
+        int largestID = query.value(0).toInt();
+        qDebug() << "The largest ID is: " << largestID;
+        return largestID;
+    } else {
+        qDebug() << "Query failed!";
+    }
 
+}
 void db::saveToDB(QImage& i,QByteArray& h,double s){
     QByteArray imageData;
     QBuffer buffer(&imageData);
@@ -42,16 +54,19 @@ void db::saveToDB(QImage& i,QByteArray& h,double s){
     }
 
 }
-void db::readFromDB(long long int index){
+Image db::readFromDB(long long int index){
     QSqlQuery query;
-    query.prepare("SELECT image FROM images WHERE ID = :index");
+    query.prepare("SELECT image, similarity FROM images WHERE ID = :index");
     query.bindValue(":index", index);
     if (query.exec() && query.first()) {
         QByteArray imageData = query.value(0).toByteArray();
+        double s = query.value(1).toDouble();
         QImage image;
         if (image.loadFromData(imageData,"PNG")) {
+            Image img = Image(image);
+            img.setSimilarty(s);
+            return img;
 
-            image.save("E:/dbimg/image.png");
         } else {
             qDebug() << "Failed to load image from data.";
         }

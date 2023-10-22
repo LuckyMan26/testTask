@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     db.cpp \
+    handleimagetask.cpp \
     image.cpp \
     imagewidget.cpp \
     imagewindow.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     db.h \
+    handleimagetask.h \
     image.h \
     imagewidget.h \
     imagewindow.h \
