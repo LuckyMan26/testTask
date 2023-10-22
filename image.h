@@ -20,12 +20,14 @@ public:
     static db d;
     Image(QImage& i,QObject* p=nullptr);
     void saveToDB();
-    double compareToPreviousImage();
+    double compareToPreviousImage(QImage* img);
     void saveToDB() const;
     QPixmap getPixmap();
 
     QImage resize(int w, int h);
     QImage getImg();
+    double getSimilarity();
+    void handleImage(QImage* prevImg);
 signals:
     void finishedSavingToDB(void);
 

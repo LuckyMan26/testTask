@@ -22,7 +22,7 @@ db::db()
 
 }
 
-void db::saveToDB(QImage& i,QByteArray& h){
+void db::saveToDB(QImage& i,QByteArray& h,double s){
     QByteArray imageData;
     QBuffer buffer(&imageData);
     buffer.open(QIODevice::WriteOnly);
@@ -32,7 +32,7 @@ void db::saveToDB(QImage& i,QByteArray& h){
     QSqlQuery query;
     query.prepare("INSERT INTO images (hashsum,similarity,image) VALUES (?, ?, ?)");
     query.addBindValue(h);
-    query.addBindValue(0.5);
+    query.addBindValue(s);
     query.addBindValue(imageData);
 
     if (query.exec()) {

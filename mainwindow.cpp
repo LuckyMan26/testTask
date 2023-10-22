@@ -11,8 +11,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 
+
 {
     ui->setupUi(this);
+    prevImage = new QImage();
+    prevImage = nullptr;
     screen =  QGuiApplication::primaryScreen();
     filePath = "E:/images/";
     layout = new QGridLayout();
@@ -42,7 +45,9 @@ void MainWindow::takeScreenShot(){
     Image* img = new Image(image, this);
 
     connect(img, &Image::finishedSavingToDB, this, [img,this]{addImgToLayout(*img); });
-    img->saveToDB();
+    img->handleImage(prevImage);
+    prevImage = new QImage(image);
+    qDebug() << "Here\n";
     connect(img, &QObject::destroyed,
             [] { qDebug() << "Sender got deleted!"; });
     connect(this, &QObject::destroyed,

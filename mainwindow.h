@@ -32,7 +32,7 @@ private:
     QTimer* timer;
     int cur_row;
     int cur_col;
-
+    QImage* prevImage;
     Ui::MainWindow *ui;
 };
 

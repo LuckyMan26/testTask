@@ -30,11 +30,18 @@ QByteArray Image::calculateImageHash(){
 QImage Image::getImg(){
     return (*img);
 }
+
 void Image::saveToDB() {
-    d.saveToDB(*img,hashsum);
+
+    d.saveToDB(*img,hashsum,similarity);
+
+
+}
+void Image::handleImage(QImage* prevImage){
+    compareToPreviousImage(prevImage);
+    saveToDB();
     emit finishedSavingToDB();
 }
-
 QPixmap Image::getPixmap(){
     QPixmap m = QPixmap::fromImage(*img);
     return m;
@@ -50,39 +57,39 @@ QImage Image::resize(int w,int h){
     painter.end();
     return resizedImage;
 }
-double Image::compareToPreviousImage(){
-    QString url = "E:/images/image_13_21_36.png";
-
-    QPixmap image(url);
-    QImage* left = new QImage(image.toImage());
-
-    int w=std::min(left->width(), img->width());
-    int h=std::min(left->height(),img->height());
-    QImage* result = new QImage(QSize(w,h),QImage::Format_ARGB32_Premultiplied);
-
-   long double mse = 0;
-  for(int i=0;i<h;i++){
-        QRgb *rgbLeft=(QRgb*)left->constScanLine(i);
-        QRgb *rgbRigth=(QRgb*)img->constScanLine(i);
-        QRgb *rgbResult=(QRgb*)result->constScanLine(i);
-
-    for(int j=0;j<w;j++){
-
-        rgbResult[j] = rgbLeft[j]-rgbRigth[j];
-
-        double res = rgbResult[j]*rgbResult[j];
-
-        mse+=(res);
+double Image::getSimilarity(){
+    return similarity;
+}
+double Image::compareToPreviousImage(QImage* i){
+    if(i==nullptr){
+        similarity = -1;
+        return -1;
     }
-  }
+    else{
+        if (i->size() != img->size()) {
 
-  long double max_mse = (((w*h))*255*255);
+            return 0.0;
+        }
 
-  mse = mse/(w*h);
-  long double nmse = 100*(mse/max_mse);
+        int width = i->width();
+        int height = i->height();
+        int totalPixels = width * height;
+        int identicalPixels = 0;
 
-  long double similarity_percentage = 100-nmse;
-  result->save("E:/images/result.png");
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                QColor pixelL = i->pixel(x, y);
+                QColor pixelR = img->pixel(x, y);
 
-  return similarity_percentage;
+
+                if (pixelL == pixelR) {
+                    identicalPixels++;
+                }
+            }
+        }
+        double similarityPercentage = (static_cast<double>(identicalPixels) / totalPixels) * 100.0;
+        similarity = similarityPercentage;
+        qDebug() << similarity << "\n";
+        return similarityPercentage;
+    }
 }

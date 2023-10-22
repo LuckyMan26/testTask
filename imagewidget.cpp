@@ -14,7 +14,13 @@ ImageWidget::ImageWidget(Image& i,QWidget *parent)
     label = new QLabel(this);
     imageLabel = new QLabel(this);
     QVBoxLayout* layout = new QVBoxLayout(this);
-    label->setText("Similarity: 0.5");
+    QString str;
+    if(i.getSimilarity()==-1){
+        str = "Similarity: None";
+    }
+    else
+        str = "Similarity: " + QString::fromStdString(std::to_string(i.getSimilarity()));
+    label->setText(str);
     layout->addWidget(label);
     layout->addWidget(imageLabel);
     setLayout(layout);

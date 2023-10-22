@@ -11,7 +11,7 @@ class db
     QSqlDatabase database;
 public:
     db();
-    static void saveToDB(QImage&,QByteArray&);
+    static void saveToDB(QImage&,QByteArray&,double );
     void readFromDB(long long int);
     ~db();
 };
