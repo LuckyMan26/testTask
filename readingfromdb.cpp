@@ -30,13 +30,13 @@ void ReadingFromDb::run(){
         qDebug() << "database not open\n";
     }
     QSqlQuery query = QSqlQuery(database);
-    query.prepare("SELECT image, similarity FROM images WHERE ID = :index");
+    query.prepare("SELECT image, similarity,hashsum FROM images WHERE ID = :index");
     query.bindValue(":index", index);
 
     if (query.exec() && query.first()) {
         QByteArray imageData = query.value(0).toByteArray();
         double s = query.value(1).toDouble();
-
+        QByteArray h= query.value(2).toByteArray();
         if (image.loadFromData(imageData, "PNG")) {
 
             if(image.isNull()){
@@ -45,6 +45,7 @@ void ReadingFromDb::run(){
             qDebug() <<"here\n";
             Image img = Image(image);
             img.setSimilarity(s);
+            img.setHashSum(h);
             img_ = new Image(img);
 
 
@@ -67,7 +68,7 @@ void ReadingFromDb::run(){
     if(image.isNull()){
     qDebug() << "Null\n";
     }
-    i->setImg(image);
+
     qDebug() << "emitting\n";
     emit finishedReading((i));
 

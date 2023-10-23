@@ -17,7 +17,7 @@ class Image :  public QObject
     QImage* img;
 
     QByteArray calculateImageHash();
-
+     void saveToDB() const;
 public:
     static db d;
     Image();
@@ -25,7 +25,7 @@ public:
     Image(Image& i);
     void saveToDB();
     double compareToPreviousImage(QImage* img);
-    void saveToDB() const;
+
     QPixmap getPixmap();
 
     QImage resize(int w, int h) const;
@@ -34,6 +34,7 @@ public:
     void handleImage(QImage* prevImg);
     void setSimilarity(double);
     void setImg(QImage);
+    void setHashSum(QByteArray);
 signals:
     void finishedSavingToDB(void);
 

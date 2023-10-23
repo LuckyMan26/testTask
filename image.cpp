@@ -17,13 +17,10 @@ Image::Image(QImage& i, QObject* p) : QObject{p}, img(new QImage())
     similarity = 0;
 }
 Image::Image(Image& i) : img(new QImage()){
-    //qDebug() << "Image(Image& i)" << QString::number((quint64)QThread::currentThread(), 16) << "\n";
+
     img = i.img;
-    //qDebug() << "i.img" << QString::number((quint64)QThread::currentThread(), 16) << "\n";
-    hashsum = 0;
-    //qDebug() << "hashsum" << QString::number((quint64)QThread::currentThread(), 16) << "\n";
+    hashsum = i.hashsum;
     similarity = i.similarity;
-    //qDebug() << "similarity"  << QString::number((quint64)QThread::currentThread(), 16) << "\n";
 }
 Image::Image(){
     hashsum=0;
@@ -34,6 +31,7 @@ Image::Image(){
 void Image::setSimilarity(double s){
     similarity = s;
 }
+//Calculating hashsum of the file
 QByteArray Image::calculateImageHash(){
     QByteArray imageData;
     QBuffer buffer(&imageData);
@@ -49,26 +47,32 @@ QByteArray Image::calculateImageHash(){
 void Image::setImg(QImage i){
     img = new QImage(i);
 }
+void Image::setHashSum(QByteArray h){
+    hashsum = h;
+}
 QImage Image::getImg() const{
 
     return (*img);
 }
-
+//Process of saving to db
 void Image::saveToDB() {
 
     d.saveToDB(*img,hashsum,similarity);
 
 
 }
+//Method which calculated similarity to the previous image and save it to db
 void Image::handleImage(QImage* prevImage){
     compareToPreviousImage(prevImage);
     saveToDB();
     emit finishedSavingToDB();
 }
+
 QPixmap Image::getPixmap(){
     QPixmap m = QPixmap::fromImage(*img);
     return m;
 }
+//Resizing image to appropriate size(returns new image)
 QImage Image::resize(int w,int h) const{
 
     QImage resizedImage(w, h, QImage::Format_ARGB32);
@@ -83,6 +87,8 @@ QImage Image::resize(int w,int h) const{
 double Image::getSimilarity() const{
     return similarity;
 }
+//Compares image to another and returns their similarity in the procents
+//We calculate number of identical pixel and return similarityPercentage
 double Image::compareToPreviousImage(QImage* i){
     if(i==nullptr){
         similarity = -1;
