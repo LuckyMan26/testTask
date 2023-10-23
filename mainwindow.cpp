@@ -12,6 +12,7 @@
 #include <QThreadPool>
 #include "readingfromdb.h"
 #include <QGridLayout>
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
     ui->setupUi(this);
-
+    isRunning = false;
     prevImage = new QImage();
     prevImage = nullptr;
     screen =  QGuiApplication::primaryScreen();
@@ -33,15 +34,35 @@ MainWindow::MainWindow(QWidget *parent)
 
     button->setStyleSheet("background-color: green; color: white;");
     layout->addWidget(button,0,0, Qt::AlignTop);
-    connect(button,&QPushButton::clicked,this,&MainWindow::takeScreenShot);
-    timer = new QTimer(this);
+    connect(button,&QPushButton::clicked,this,[this]{
+        if(!isRunning){
 
-    connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
-    timer->start(60000);
+        startApp();
+        button->setStyleSheet("background-color: red; color: white;");
+        button->setText("Stop");
+        }
+        else{
+        finishApp();
+        button->setStyleSheet("background-color: green; color: white;");
+        button->setText("Start");
+        }
+    });
+
     cur_row = 0;
     cur_col = 1;
     readImagesFromDB();
 
+}
+void MainWindow::startApp(){
+    isRunning = true;
+    timer = new QTimer(this);
+
+    connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
+    timer->start(60000);
+}
+void MainWindow::finishApp(){
+    isRunning = false;
+    timer->deleteLater();
 }
 void MainWindow::readImagesFromDB(){
 
@@ -53,6 +74,7 @@ void MainWindow::readImagesFromDB(){
         ReadingFromDb* task = new ReadingFromDb(i);
         connect(task, &ReadingFromDb::finishedReading, this, [this](const Image* img){
                 qDebug() << "Hello from here\n";
+
             if(!img->getImg().isNull())
                     addImgToLayout(*img);
 
@@ -64,7 +86,7 @@ void MainWindow::readImagesFromDB(){
         qDebug() << "Hello from here\n";
         if(!img->getImg().isNull())
             addImgToLayout(*img);
-            prevImage = new QImage(img->getImg());
+        prevImage = new QImage(img->getImg());
     });
     QThreadPool::globalInstance()->start(task);
 

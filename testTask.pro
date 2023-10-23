@@ -19,7 +19,6 @@ SOURCES += \
     readingfromdb.cpp
 
 HEADERS += \
-    ImageDownloader.h \
     db.h \
     handleimagetask.h \
     image.h \

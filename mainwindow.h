@@ -23,7 +23,8 @@ public:
 public slots:
     void takeScreenShot();
     void addImgToLayout(const Image&);
-
+    void startApp();
+    void finishApp();
 private:
     void readImagesFromDB();
     QGridLayout* layout;
@@ -34,6 +35,7 @@ private:
     int cur_row;
     int cur_col;
     QImage* prevImage;
+    bool isRunning;
     Ui::MainWindow *ui;
 };
 

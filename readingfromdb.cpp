@@ -9,6 +9,7 @@
 #include <QSqlError>
 #include <QPixmap>
 
+
 ReadingFromDb::ReadingFromDb(int index,QObject *parent)
     : QObject{parent},
     index(index)
