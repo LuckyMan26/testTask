@@ -19,7 +19,7 @@ public:
     Image getImage();
 signals:
     void finishedReading(const Image*);
-    void imageLoaded(Image&);
+
 };
 
 #endif // READINGFROMDB_H

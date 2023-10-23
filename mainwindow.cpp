@@ -11,6 +11,7 @@
 #include "handleimagetask.h"
 #include <QThreadPool>
 #include "readingfromdb.h"
+#include <QGridLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -48,15 +49,24 @@ void MainWindow::readImagesFromDB(){
     int num_max = img.d.getMaxId();
     int num_min = img.d.getMinId();
 
-    for(int i=num_min;i <= num_max;i++){
+    for(int i=num_min;i <= num_max-1;i++){
         ReadingFromDb* task = new ReadingFromDb(i);
         connect(task, &ReadingFromDb::finishedReading, this, [this](const Image* img){
                 qDebug() << "Hello from here\n";
-                addImgToLayout(*img);
+            if(!img->getImg().isNull())
+                    addImgToLayout(*img);
 
             });
         QThreadPool::globalInstance()->start(task);
     }
+    ReadingFromDb* task = new ReadingFromDb(num_max);
+    connect(task, &ReadingFromDb::finishedReading, this, [this](const Image* img){
+        qDebug() << "Hello from here\n";
+        if(!img->getImg().isNull())
+            addImgToLayout(*img);
+            prevImage = new QImage(img->getImg());
+    });
+    QThreadPool::globalInstance()->start(task);
 
 }
 void MainWindow::takeScreenShot(){
@@ -89,17 +99,31 @@ void MainWindow::takeScreenShot(){
 void MainWindow::addImgToLayout(const Image& i){
 
     qDebug() << "adding to layout\n";
-    if(!i.getImg().isNull()){
-        qDebug() << "not Null\n";
-    }
-    ImageWidget* w = new ImageWidget(i);
-    layout->addWidget(w, cur_row, cur_col,cur_row,cur_col);
 
-    cur_col++;
-    if(cur_col > 5){
-        cur_col = 0;
-        cur_row++;
+    ImageWidget* w = new ImageWidget(i);
+    layout->addWidget(w, 0, 0);
+    QGridLayout layout_temp = QGridLayout();
+
+    for (int i = 0; i < layout->rowCount(); i++) {
+        for (int j = 0; j < layout->columnCount(); j++) {
+            QLayoutItem* item = layout->itemAtPosition(i, j);
+            if (item != nullptr) {
+                layout_temp.addWidget(item->widget(), i, j);
+            }
+        }
     }
+
+    for (int i = 0; i < layout_temp.rowCount(); i++) {
+        for (int j = 0; j < layout_temp.columnCount(); j++) {
+
+            QLayoutItem* item = layout_temp.itemAtPosition(i, j);
+            if (item != nullptr) {
+                layout->addWidget(item->widget(), i+(j+1)/5, (j+1)%5);
+            }
+        }
+    }
+
+
 
 }
 MainWindow::~MainWindow()

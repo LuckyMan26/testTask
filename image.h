@@ -17,6 +17,7 @@ class Image :  public QObject
     QImage* img;
 
     QByteArray calculateImageHash();
+
 public:
     static db d;
     Image();
