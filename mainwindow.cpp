@@ -1,6 +1,5 @@
 
 #include "mainwindow.h"
-#include "ImageDownloader.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QDateTime>
@@ -53,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     readImagesFromDB();
 
 }
+//Slot to start app
 void MainWindow::startApp(){
     isRunning = true;
     timer = new QTimer(this);
@@ -60,10 +60,12 @@ void MainWindow::startApp(){
     connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
     timer->start(60000);
 }
+//Slot to finish app(can be restarted)
 void MainWindow::finishApp(){
     isRunning = false;
     timer->deleteLater();
 }
+//This method reads all images that already exist in the database
 void MainWindow::readImagesFromDB(){
 
     Image img;
@@ -91,6 +93,7 @@ void MainWindow::readImagesFromDB(){
     QThreadPool::globalInstance()->start(task);
 
 }
+//This slot is responsible for creating a screenshot
 void MainWindow::takeScreenShot(){
 
     QDateTime currentDateTime = QDateTime::currentDateTime();
@@ -104,7 +107,7 @@ void MainWindow::takeScreenShot(){
     qDebug()<<image.save(fileFullPath)<<"\n";
     Image* img = new Image(image, this);
 
-
+    //here we save and compare out image to the previous one
     HandleImageTask* task = new HandleImageTask(img,prevImage);
     connect(task, &HandleImageTask::finishedHandling, this, [img,this]{addImgToLayout(*img); img->saveToDB();},Qt::ConnectionType::QueuedConnection);
 
@@ -118,6 +121,7 @@ void MainWindow::takeScreenShot(){
 
     qDebug() << "Saved\n";
 }
+//here we add them to grid layout
 void MainWindow::addImgToLayout(const Image& i){
 
     qDebug() << "adding to layout\n";
@@ -125,7 +129,7 @@ void MainWindow::addImgToLayout(const Image& i){
     ImageWidget* w = new ImageWidget(i);
     layout->addWidget(w, 0, 0);
     QGridLayout layout_temp = QGridLayout();
-
+    //Here we shift all elements to the left to locate the last one at first row and first column
     for (int i = 0; i < layout->rowCount(); i++) {
         for (int j = 0; j < layout->columnCount(); j++) {
             QLayoutItem* item = layout->itemAtPosition(i, j);
@@ -150,6 +154,7 @@ void MainWindow::addImgToLayout(const Image& i){
 }
 MainWindow::~MainWindow()
 {
+
     delete ui;
 }
 

@@ -7,7 +7,7 @@
 #include <QRunnable>
 #include "image.h"
 
-
+//This class which we put in QThreadPool (it reads element with ID=index and returns Image)
 class ReadingFromDb : public QObject, public QRunnable
 {
     Q_OBJECT

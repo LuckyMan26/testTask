@@ -5,7 +5,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
-
+//Full screen mode of the image
 class imageWindow : public QMainWindow
 {
     Q_OBJECT
