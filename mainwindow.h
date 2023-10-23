@@ -6,6 +6,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QScreen>
+#include "image.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,14 +20,22 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-private slots:
+public slots:
     void takeScreenShot();
+    void addImgToLayout(const Image&);
+    void startApp();
+    void finishApp();
 private:
+    void readImagesFromDB();
     QGridLayout* layout;
     QPushButton *button;
     QScreen* screen;
     QString filePath;
     QTimer* timer;
+    int cur_row;
+    int cur_col;
+    QImage* prevImage;
+    bool isRunning;
     Ui::MainWindow *ui;
 };
 
