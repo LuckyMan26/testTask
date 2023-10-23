@@ -15,15 +15,18 @@ SOURCES += \
     imagewidget.cpp \
     imagewindow.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    readingfromdb.cpp
 
 HEADERS += \
+    ImageDownloader.h \
     db.h \
     handleimagetask.h \
     image.h \
     imagewidget.h \
     imagewindow.h \
-    mainwindow.h
+    mainwindow.h \
+    readingfromdb.h
 
 FORMS += \
     mainwindow.ui

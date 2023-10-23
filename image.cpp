@@ -7,20 +7,31 @@
 #include <QBuffer>
 #include <QCryptographicHash>
 #include <QPainter>
+#include <QThread>
 
 db Image::d = db();
-Image::Image(QImage& i, QObject* p) : QObject{p}
+Image::Image(QImage& i, QObject* p) : QObject{p}, img(new QImage())
 {
     img = new QImage(i);
     hashsum = calculateImageHash();
     similarity = 0;
 }
-Image::Image(Image& i){
+Image::Image(Image& i) : img(new QImage()){
+    //qDebug() << "Image(Image& i)" << QString::number((quint64)QThread::currentThread(), 16) << "\n";
     img = i.img;
-    hashsum = i.hashsum;
+    //qDebug() << "i.img" << QString::number((quint64)QThread::currentThread(), 16) << "\n";
+    hashsum = 0;
+    //qDebug() << "hashsum" << QString::number((quint64)QThread::currentThread(), 16) << "\n";
     similarity = i.similarity;
+    //qDebug() << "similarity"  << QString::number((quint64)QThread::currentThread(), 16) << "\n";
 }
-void Image::setSimilarty(double s){
+Image::Image(){
+    hashsum=0;
+    similarity = -1;
+    img = new QImage();
+
+}
+void Image::setSimilarity(double s){
     similarity = s;
 }
 QByteArray Image::calculateImageHash(){
@@ -35,7 +46,11 @@ QByteArray Image::calculateImageHash(){
 
     return hash.toHex();
 }
-QImage Image::getImg(){
+void Image::setImg(QImage i){
+    img = new QImage(i);
+}
+QImage Image::getImg() const{
+
     return (*img);
 }
 
@@ -54,7 +69,7 @@ QPixmap Image::getPixmap(){
     QPixmap m = QPixmap::fromImage(*img);
     return m;
 }
-QImage Image::resize(int w,int h){
+QImage Image::resize(int w,int h) const{
 
     QImage resizedImage(w, h, QImage::Format_ARGB32);
 
@@ -65,7 +80,7 @@ QImage Image::resize(int w,int h){
     painter.end();
     return resizedImage;
 }
-double Image::getSimilarity(){
+double Image::getSimilarity() const{
     return similarity;
 }
 double Image::compareToPreviousImage(QImage* i){

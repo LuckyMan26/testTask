@@ -12,9 +12,11 @@ class db
     QSqlDatabase database;
 public:
     db();
-    static void saveToDB(QImage&,QByteArray&,double );
+
+    void saveToDB(QImage&,QByteArray&,double );
     Image readFromDB(long long int);
     long long int getMaxId();
+    long long int getMinId();
     ~db();
 };
 

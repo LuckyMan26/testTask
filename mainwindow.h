@@ -22,7 +22,7 @@ public:
     ~MainWindow();
 public slots:
     void takeScreenShot();
-    void addImgToLayout(Image&);
+    void addImgToLayout(const Image&);
 
 private:
     void readImagesFromDB();

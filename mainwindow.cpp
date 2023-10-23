@@ -1,5 +1,6 @@
 
 #include "mainwindow.h"
+#include "ImageDownloader.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QDateTime>
@@ -9,6 +10,7 @@
 #include "imagewidget.h"
 #include "handleimagetask.h"
 #include <QThreadPool>
+#include "readingfromdb.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,30 +19,43 @@ MainWindow::MainWindow(QWidget *parent)
 
 {
     ui->setupUi(this);
+
     prevImage = new QImage();
     prevImage = nullptr;
     screen =  QGuiApplication::primaryScreen();
     filePath = "E:/images/";
     layout = new QGridLayout();
     ui->centralwidget->setLayout(layout);
-    button = new QPushButton("Click me");
-    layout->addWidget(button,2,0);
+    button = new QPushButton("Start");
+    button->setStyleSheet("font-size: 20px; font-weight: bold;");
+
+
+    button->setStyleSheet("background-color: green; color: white;");
+    layout->addWidget(button,0,0, Qt::AlignTop);
     connect(button,&QPushButton::clicked,this,&MainWindow::takeScreenShot);
     timer = new QTimer(this);
+
     connect(timer,&QTimer::timeout,this,&MainWindow::takeScreenShot);
     timer->start(60000);
     cur_row = 0;
-    cur_col = 0;
-
+    cur_col = 1;
+    readImagesFromDB();
 
 }
 void MainWindow::readImagesFromDB(){
-    db d;
-    int num = d.getMaxId();
 
-    for(int i=0;i < num;i++){
-        Image img = d.readFromDB(i+1);
-        addImgToLayout(img);
+    Image img;
+    int num_max = img.d.getMaxId();
+    int num_min = img.d.getMinId();
+
+    for(int i=num_min;i <= num_max;i++){
+        ReadingFromDb* task = new ReadingFromDb(i);
+        connect(task, &ReadingFromDb::finishedReading, this, [this](const Image* img){
+                qDebug() << "Hello from here\n";
+                addImgToLayout(*img);
+
+            });
+        QThreadPool::globalInstance()->start(task);
     }
 
 }
@@ -59,7 +74,7 @@ void MainWindow::takeScreenShot(){
 
 
     HandleImageTask* task = new HandleImageTask(img,prevImage);
-    connect(task, &HandleImageTask::finishedHandling, this, [img,this]{addImgToLayout(*img); },Qt::ConnectionType::QueuedConnection);
+    connect(task, &HandleImageTask::finishedHandling, this, [img,this]{addImgToLayout(*img); img->saveToDB();},Qt::ConnectionType::QueuedConnection);
 
     QThreadPool::globalInstance()->start(task);
     prevImage = new QImage(image);
@@ -71,11 +86,14 @@ void MainWindow::takeScreenShot(){
 
     qDebug() << "Saved\n";
 }
-void MainWindow::addImgToLayout(Image& i){
-    i.saveToDB();
+void MainWindow::addImgToLayout(const Image& i){
+
     qDebug() << "adding to layout\n";
+    if(!i.getImg().isNull()){
+        qDebug() << "not Null\n";
+    }
     ImageWidget* w = new ImageWidget(i);
-    layout->addWidget(w, cur_row, cur_col);
+    layout->addWidget(w, cur_row, cur_col,cur_row,cur_col);
 
     cur_col++;
     if(cur_col > 5){

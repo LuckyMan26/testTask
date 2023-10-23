@@ -4,7 +4,7 @@
 #include <QMouseEvent>
 #include "imagewindow.h"
 
-ImageWidget::ImageWidget(Image& i,QWidget *parent)
+ImageWidget::ImageWidget(const Image& i,QWidget *parent)
     : QWidget{parent}
 
 {

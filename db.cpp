@@ -22,6 +22,7 @@ db::db()
     }
 
 }
+
 long long int db::getMaxId(){
     QSqlQuery query;
     query.exec("SELECT MAX(id) FROM images");
@@ -34,6 +35,19 @@ long long int db::getMaxId(){
     }
 
 }
+long long int db::getMinId(){
+    QSqlQuery query;
+    query.exec("SELECT MIN(id) FROM images");
+    if (query.next()) {
+        int smallestID = query.value(0).toInt();
+        qDebug() << "The smallest ID is: " << smallestID;
+        return smallestID;
+    } else {
+        qDebug() << "Query failed!";
+    }
+}
+
+
 void db::saveToDB(QImage& i,QByteArray& h,double s){
     QByteArray imageData;
     QBuffer buffer(&imageData);
@@ -64,7 +78,7 @@ Image db::readFromDB(long long int index){
         QImage image;
         if (image.loadFromData(imageData,"PNG")) {
             Image img = Image(image);
-            img.setSimilarty(s);
+            img.setSimilarity(s);
             return img;
 
         } else {

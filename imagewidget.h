@@ -11,7 +11,7 @@ class ImageWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ImageWidget(Image& i, QWidget *parent = nullptr);
+    explicit ImageWidget(const Image& i, QWidget *parent = nullptr);
      void setImage(const QImage& image);
 private:
     QLabel* label;
